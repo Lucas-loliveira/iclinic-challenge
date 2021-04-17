@@ -1,4 +1,5 @@
 import requests
+import json
 from requests.exceptions import ConnectionError
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -54,7 +55,7 @@ class BaseClient:
 
         return response
 
-    def _request_post(self, url, token, timeout = 5, retry = 5, **kwargs,):
+    def _request_post(self, url, token, timeout = 5, retry = 5, data = None):
         session = self._get_session(token)
 
         adapter_time = TimeoutHTTPAdapter(timeout=timeout)
@@ -62,9 +63,8 @@ class BaseClient:
 
         session.mount("https://", adapter_retry)
         session.mount("https://", adapter_time)
-       
         try:
-            response = session.post(url, **kwargs)
+            response = session.post(url, data = json.dumps(data))
             
         except ConnectionError:
             return False
