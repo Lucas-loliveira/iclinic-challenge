@@ -69,3 +69,4 @@ def test_prescription_wrong_type(api_client):
     response = api_client.post('/prescriptions/',content_type='application/json', data=json.dumps(data))
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+    

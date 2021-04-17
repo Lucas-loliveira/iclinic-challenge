@@ -1,7 +1,7 @@
 from django.test import TestCase
 from mixer.backend.django import mixer
 from prescriptions.models import Prescription
-from prescriptions.serializer import PrescriptionSerializer
+from prescriptions.serializers.serializer import PrescriptionSerializer
 
 class PrescriptionSerializerTestCase(TestCase):
 
@@ -12,3 +12,10 @@ class PrescriptionSerializerTestCase(TestCase):
     def test_serialized_data(self):
         data = self.serializer.data
         self.assertEqual(set(data.keys()), set(['id','id_clinic', 'id_physician', 'id_patient', 'text'] ))
+
+    def test_validate_data(self):
+        assert self.serializer.validate_id_patient('1') == '1'
+        assert self.serializer.validate_id_physician('1') == '1'
+        assert self.serializer.validate_id_clinic('1') == '1'
+        
+        

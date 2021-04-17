@@ -1,15 +1,13 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from prescriptions.models import Prescription
-from . import serializer
-from prescriptions.serializer import PrescriptionSerializer
+from prescriptions.serializers.serializer import PrescriptionSerializer
 from prescriptions.views_helper import PrescriptionsViewHelper
 
 
 class PrescriptionsViewSet(viewsets.ModelViewSet):
-    queryset = Prescription.objects.all()
-    serializer_class = PrescriptionSerializer
     http_method_names = ['post']
+
     def create(self, request):
         view_helper = PrescriptionsViewHelper()
         formated_request = view_helper.format_post_request(request.data)
