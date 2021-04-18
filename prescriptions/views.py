@@ -16,9 +16,9 @@ class PrescriptionsViewSet(viewsets.ModelViewSet):
             serializer = PrescriptionSerializer(data=formated_request)    
             if serializer.is_valid():
                 serializer.save()
-                return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+                return Response(view_helper.format_response(serializer.data), status=status.HTTP_201_CREATED)
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({'error':{'message':'malformed request', 'code': '01'}}, status=status.HTTP_400_BAD_REQUEST)
 

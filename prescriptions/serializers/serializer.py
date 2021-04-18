@@ -21,10 +21,12 @@ class PrescriptionSerializer(serializers.ModelSerializer):
             if response_physician.ok:
                 for key, value in response_physician.json().items():
                     self.metrics_data[f'physician_{key}'] = value
+            elif response_physician.status_code == 500:
+                raise serializers.ValidationError({'error': {'message': "physicians service not available", 'code': "05"}})
             else:
                 raise serializers.ValidationError({'error': {'message': "physician not found", 'code': "02"}})
         else:
-            raise serializers.ValidationError({'error': {'message': "physicians service not available", 'code': "05"}})
+            raise serializers.ValidationError({'error': {'message': "connection error", 'code': "07"}})
 
         response_patient = self.validator.validate_patient(data['id_patient'])
 
@@ -32,10 +34,12 @@ class PrescriptionSerializer(serializers.ModelSerializer):
             if response_patient.ok:
                 for key, value in response_patient.json().items():
                     self.metrics_data[f'patient_{key}'] = value
+            elif response_patient.status_code == 500:
+                raise serializers.ValidationError({'error': {'message': "patients service not available", 'code': "06"}})
             else:
                 raise serializers.ValidationError({'error': {'message': "patient not found", 'code': "03"}})
         else:
-            raise serializers.ValidationError({'error': {'message': "patients service not available", 'code': "06"}})
+            raise serializers.ValidationError({'error': {'message': "connection error", 'code': "07"}})
 
         response_clinic = self.validator.validate_clinic(data['id_clinic'])
 
@@ -51,7 +55,7 @@ class PrescriptionSerializer(serializers.ModelSerializer):
         metrics_service = Metrics() 
 
         sid = transaction.savepoint()
-        Prescription.objects.create(**validated_data)
+        obj = Prescription.objects.create(**validated_data)
 
         if metrics_service.post_metrics(self.metrics_data):  
             transaction.savepoint_commit(sid)
@@ -59,5 +63,5 @@ class PrescriptionSerializer(serializers.ModelSerializer):
             transaction.savepoint_rollback(sid)
             raise serializers.ValidationError({'error': {'message': "metrics service not available", 'code': "04"}})
 
-        return validated_data
+        return obj
 
