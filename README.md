@@ -20,6 +20,10 @@ docker-compose build
 docker-compose build up
 ```
 
+```bash
+docker-compose exec web python manage.py migrate
+```
+
 ### Possiveis erros 
 
 Erro: port is already allocated
