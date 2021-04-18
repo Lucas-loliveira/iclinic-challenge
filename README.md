@@ -110,6 +110,7 @@ docker-compose exec web py.test
 
 
 ## Pendências e melhorias
+- CI
 - Estilo do arquivo serializer
 - testes unitários dos recursos de retry e timeout dos requests
 - Settings do projeto
